@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Episode from './Components/Episode';
+import Episode from './Episode';
 
 class SelectedShowContainer extends Component {
 
@@ -8,21 +8,22 @@ class SelectedShowContainer extends Component {
   }
 
   mapSeasons = () => {
-    if (!!this.props.episodes){
-      let seasons = this.props.episodes.map((e)=> e.season).unique()
-
-      return seasons.map((s) => {
+    if (!!this.props.allEpisodes){
+      let seasons = this.props.allEpisodes.map((e) => e.season)
+      let uniqueSeason = []
+      for (let i = 0; i < seasons.length; i++) {
+        if(!uniqueSeason.includes(seasons[i])) {
+          uniqueSeason.push(seasons[i])
+        }
+      }
+      return uniqueSeason.map((s) => {
         return (<option value={s} key={s}>Season {s}</option>)
       });
     }
   }
 
-  mapEpisodes = () => {
-    return this.props.episodes.map((e)=>{
-      if (e.season == this.state.selectedSeason){
-        return (<Episode eachEpisode={e} key={e.id}/>)
-      }
-    })
+  mapEpisodes = season => {
+    return this.props.allEpisodes.filter(e => parseInt(e.season, 10) === parseInt(season, 10)).map(e => <Episode eachEpisode={e} key={e.id} />)
   }
 
   handleSelectionChange = (e) => {
@@ -44,17 +45,17 @@ class SelectedShowContainer extends Component {
         <select style={{display: 'block'}} onChange={this.handleSelectionChange}>
           {this.mapSeasons()}
         </select>
-        {this.mapEpisodes()}
+        {this.mapEpisodes(this.state.selectedSeason)}
       </div>
     );
   }
 
 }
 
-export SelectedShowContainer;
+export default SelectedShowContainer;
 
 
-Array.prototype.unique = function() {
+Array.unique = function() {
   var arr = [];
   for(var i = 0; i < this.length; i++) {
     if(!arr.includes(this[i])) {
